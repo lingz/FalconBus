@@ -13,4 +13,9 @@
     <preference name="webviewbounce" value="true" />
     <icon src="icon.png" />
     <gap:splash src="splash.png" />
+    <platform name="android">
+      <config-file target="AndroidManifest.xml" parent="/manifest">
+        <uses-permission android:name="android.permission.INTERNET"/>
+      </config-file>
+    </platform>
 </widget>
