@@ -9,13 +9,9 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <preference name="fullscreen" value="true" />
+    <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="true" />
     <icon src="icon.png" />
     <gap:splash src="splash.png" />
-    <platform name="android">
-      <config-file target="AndroidManifest.xml">
-        <uses-permission android:name="android.permission.INTERNET"/>
-      </config-file>
-    </platform>
+    <preference name="permissions" value="none"/>
 </widget>
