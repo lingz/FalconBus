@@ -2,17 +2,18 @@
   <head>
     <title>Falcon Bus App</title>
     <script src="jquery-2.1.0.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato:400,700|Noto+Serif:400,400italic,700" />
+    <script src="jquery.scrollTo.min.js"></script>
+    <script src="moment.js"></script>
     <link rel="stylesheet" href="site.css" type="text/css" media="all" />
     </head>
     <body>
-<main>
+<main style="overflow: hidden;">
     <div id="shuttleWrapper">
       <article class="component link-list shuttle" id="shuttleDepartureLocations" style="min-height:0;">
         <div class="linkListWrapper">
           <h2 class="location">Starting Location</h2>
           <div class="detail">
-            <ul><li class=""><a href="#">CSE</a></li><li><a href="#">DTC</a></li><li class="active"><a href="#">Sama</a></li></ul>
+            <ul><li class=""><a href="#">CSE</a></li><li><a href="#">DTC</a></li><li><a href="#">Sama</a></li></ul>
           </div>
         </div>
       </article>
@@ -20,17 +21,17 @@
         <div class="linkListWrapper">
           <h2>Destination</h2>
           <div class="detail">
-            <ul><li><a href="#">CSE</a></li><li class="active"><a href="#">DTC</a></li></ul>
+            <ul><li><a href="#">CSE</a></li><li><a href="#">DTC</a></li></ul>
           </div>
         </div>
       </article>
       <div id="shuttleScheduleWrapper" style="display: block; padding: 0 20px;">
         <div id="shuttleInfo">
-          <p class="info-text">Next <span class="route">Sama to DTC</span> bus departing in approximately</p>
-          <span class="timing"> 3 mins</span>
+          <p class="info-text"><span class="route"></span></p>
+          <span class="timing"></span>
         </div>
         <div id="shuttleSchedule" style="display: block;">
-          <h3><span class="route">Sama to DTC</span> Full Schedule</h3>
+          <h3><span class="route"></span> Full Schedule</h3>
           <table>
             <thead>
             <tr>
@@ -39,7 +40,7 @@
               <th>Time until Departure </th>
             </tr>
             </thead>
-            <tbody><tr><td>1:55pm</td><td> 18 mins</td></tr><tr><td>2:10pm</td><td> 33 mins</td></tr><tr><td>2:23pm</td><td> 46 mins</td></tr><tr><td>2:35pm</td><td> 58 mins</td></tr><tr><td>2:47pm</td><td>1 hour 10 mins</td></tr><tr><td>2:55pm</td><td>1 hour 18 mins</td></tr><tr><td>3:10pm</td><td>1 hour 33 mins</td></tr><tr><td>3:25pm</td><td>1 hour 48 mins</td></tr><tr><td>3:36pm</td><td>1 hour 59 mins</td></tr><tr><td>3:47pm</td><td>2 hours 10 mins</td></tr><tr><td>3:57pm</td><td>2 hours 20 mins</td></tr><tr><td>4:07pm</td><td>2 hours 30 mins</td></tr><tr><td>4:15pm</td><td>2 hours 38 mins</td></tr><tr><td>4:18pm</td><td>2 hours 41 mins</td></tr><tr><td>4:25pm</td><td>2 hours 48 mins</td></tr><tr><td>4:41pm</td><td>3 hours 4 mins</td></tr><tr><td>4:50pm</td><td>3 hours 13 mins</td></tr><tr><td>5:02pm</td><td>3 hours 25 mins</td></tr><tr><td>5:15pm</td><td>3 hours 38 mins</td></tr><tr><td>5:22pm</td><td>3 hours 45 mins</td></tr><tr><td>5:27pm</td><td>3 hours 50 mins</td></tr><tr><td>5:42pm</td><td>4 hours 5 mins</td></tr><tr><td>5:58pm</td><td>4 hours 21 mins</td></tr><tr><td>6:17pm</td><td>4 hours 40 mins</td></tr><tr><td>6:32pm</td><td>4 hours 55 mins</td></tr><tr><td>6:42pm</td><td>5 hours 5 mins</td></tr><tr><td>6:57pm</td><td>5 hours 20 mins</td></tr><tr><td>7:07pm</td><td>5 hours 30 mins</td></tr><tr><td>7:26pm</td><td>5 hours 49 mins</td></tr><tr><td>7:42pm</td><td>6 hours 5 mins</td></tr><tr><td>8:02pm</td><td>6 hours 25 mins</td></tr><tr><td>8:22pm</td><td>6 hours 45 mins</td></tr><tr><td>8:41pm</td><td>7 hours 4 mins</td></tr><tr><td>9:01pm</td><td>7 hours 24 mins</td></tr><tr><td>9:20pm</td><td>7 hours 43 mins</td></tr><tr><td>9:40pm</td><td>8 hours 3 mins</td></tr><tr><td>10:00pm</td><td>8 hours 23 mins</td></tr><tr><td>10:20pm</td><td>8 hours 43 mins</td></tr><tr><td>10:41pm</td><td>9 hours 4 mins</td></tr><tr><td>10:51pm</td><td>9 hours 14 mins</td></tr></tbody>
+            <tbody></tbody>
           </table>
           <div id="shuttleNoUpcomingSchedule" style="display: none;"></div>
         </div>
@@ -70,6 +71,7 @@
           arrivalLocation: null,
           controllerURL: 'https://students.nyuad.nyu.edu/apps/shuttles/',
           schedule: null,
+          firstScroll: true,
           now: new Date(),
           days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
           initialize: function() {
@@ -78,6 +80,16 @@
               localStorage.setItem("shuttles", JSON.stringify(data));
             }
             this.schedule = JSON.parse(localStorage.getItem("shuttles"));
+            console.log(this.schedule);
+            var today = moment().date()
+            for (var origin in this.schedule.times) {
+              for (var destination in this.schedule.times[origin]) {
+                var activeTimes = this.schedule.times[origin][destination];
+                for (var i=0; i < activeTimes.length; i++) {
+                  activeTimes[i].time = moment.unix(activeTimes[i].time).date(today).unix();
+                }
+              }
+            }
             this.prepareInterface();
           },
           prepareInterface: function() {
@@ -115,11 +127,6 @@
                 self.arrivalLocationsContainer.find("ul").append(listItem);
               }
               self.departureLocation = $(this).text().trim();
-              // mobile only - scroll to next block
-              if(document.documentElement.clientWidth < 980) {
-                  //window.location.hash = 'shuttleArrivalLocations';
-                $('#shuttleArrivalLocations').scrollView();
-              }
             });
 
 
@@ -203,14 +210,16 @@
                 self.noScheduleLabel.show();
               }
               self.scheduleWrapper.show();
-              self.scrollToSchedule();
 
               // mobile only - scroll to next block
-              if(document.documentElement.clientWidth < 980) {
+              if(document.documentElement.clientWidth < 980 && !self.firstScroll) {
                 //window.location.hash = 'shuttleInfo';
-                $('#shuttleInfo').scrollView();
+                $.scrollTo('#shuttleInfo', 300);
+              } else {
+                self.firstScroll = false;
               }
             });
+
 
             //hook favorite button
             this.applicationWrapper.on('click', 'a.favorite', function(e) {
@@ -285,13 +294,12 @@
               }
             });
 
-          },
-          scrollToSchedule: function() {
-            if(this.shouldScroll) {
-              window.location.hash = "shuttleInfo";
-              window.scrollBy(0,-113);
-              this.schouldScroll = false;
-            }
+            // default the app
+            setTimeout(function() {
+              $("#shuttleArrivalLocations li:nth-child(2) a").trigger("click");
+            }, 100);
+            $("#shuttleDepartureLocations li:nth-child(3) a").trigger("click");
+            
           },
           addFavoriteToList: function(item) {
             var listItem = $("<li>");
@@ -318,6 +326,7 @@
             localStorage.setItem("shuttles", JSON.stringify(this.schedule));
           }
         };
+        window.interface = interface;
         interface.initialize();
       });
     </script>
