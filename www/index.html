@@ -178,18 +178,7 @@
                   //if the date being compared is not greater than the current time, continue loop
                   if(self.now.getHours() > dateCompare.getHours() || (self.now.getHours() >= dateCompare.getHours() && self.now.getMinutes() > dateCompare.getMinutes())) continue;
                   //otherwise, we found the next time and need to indicate that and show it
-                  else if(!bFoundFirstDeparture) {
-                    bFoundFirstDeparture = true;
-                    //var diff = Math.abs(dateCompare.getTime() - self.now.getTime());
-                    //var minutes = Math.floor(diff / (1000*60));
-                    var diff = Math.abs(dateCompare.getTime() - self.now.getTime());
-                    var minutes = Math.floor(diff / (1000*60));
-                    var waitMinutes = minutes >= 60 ? minutes % 60 : minutes;
-                    var waitHours = minutes >= 60 ? Math.floor(minutes / 60) : 0;
-                    self.timeUntilContainer.text((waitHours > 0 ? (waitHours > 1 ? waitHours + " hours" : waitHours + " hour") : "") + ' ' + (waitMinutes > 0 ? (waitMinutes > 1 ? waitMinutes + " mins" : waitMinutes + " mins") : "0 min"));
-                    self.timeUntilLabel.html("Next <span class=\"route\">" + self.departureLocation + " to " + self.arrivalLocation + "</span> bus departing in approximately");
-                    self.routeScheduleHeaderLabel.text(self.departureLocation + " to " + self.arrivalLocation);
-                  } else {
+                  else {
                     //add to table
                     var hours = dateCompare.getHours() % 12;
                     var meridien = dateCompare.getHours() - 12 >= 0 ? "pm" : "am";
@@ -199,6 +188,13 @@
                     var waitMinutes = minutes >= 60 ? minutes % 60 : minutes;
                     var waitHours = minutes >= 60 ? Math.floor(minutes / 60) : 0;
                     self.scheduleContainer.append('<tr><td>' + hours + ':' + (dateCompare.getMinutes()<10?'0':'') + dateCompare.getMinutes() + meridien + '</td><td>' + (waitHours > 0 ? (waitHours > 1 ? waitHours + " hours" : waitHours + " hour") : "") + ' ' + (waitMinutes > 0 ? (waitMinutes > 1 ? waitMinutes + " mins" : waitMinutes + " mins") : "0 min") + '</td></tr>');
+                    if (!bFoundFirstDeparture) {
+                      bFoundFirstDeparture = true;
+                      bFoundFirstDeparture = true;
+                      self.timeUntilContainer.text((waitHours > 0 ? (waitHours > 1 ? waitHours + " hours" : waitHours + " hour") : "") + ' ' + (waitMinutes > 0 ? (waitMinutes > 1 ? waitMinutes + " mins" : waitMinutes + " mins") : "0 min"));
+                      self.timeUntilLabel.html("Next <span class=\"route\">" + self.departureLocation + " to " + self.arrivalLocation + "</span> bus departing in approximately");
+                      self.routeScheduleHeaderLabel.text(self.departureLocation + " to " + self.arrivalLocation);
+                    }
                   }
                 }
               }
