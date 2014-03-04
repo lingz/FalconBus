@@ -93,12 +93,14 @@
             }
           },
           fixSchedules: function() {
-            var today = moment().date()
+            var todayDay = moment().date()
+            var todayMonth = moment().month()
+            var todayYear = moment().year()
             for (var origin in this.schedule.times) {
               for (var destination in this.schedule.times[origin]) {
                 var activeTimes = this.schedule.times[origin][destination];
                 for (var i=0; i < activeTimes.length; i++) {
-                  activeTimes[i].time = moment.unix(activeTimes[i].time).date(today).unix();
+                  activeTimes[i].time = moment.unix(activeTimes[i].time).date(todayDay).month(todayMonth).year(todayYear).unix();
                 }
               }
             }
